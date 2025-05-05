@@ -1,0 +1,33 @@
+<div class="mt-32 container">
+  <h1 class="text-3xl font-bold mb-8">Shopping Cart</h1>
+
+  <div *ngIf="cartItems.length > 0; else emptyCart">
+    <div *ngFor="let item of cartItems; let i = index" class="border-b py-4 flex items-center justify-between">
+      <div>
+        <h2 class="text-xl font-bold">{{ item.designation }}</h2>
+        <p>Brand: {{ item.marque }}</p>
+        <p>Price: €{{ item.prix }}</p>
+        <div class="quantity-wrapper">
+          <label>Quantity:</label>
+          <div class="quantity-control">
+            <button (click)="decreaseQuantity(item)" class="quantity-btn">➖</button>
+            <span class="quantity-display">{{ item.quantity }}</span>
+            <button (click)="increaseQuantity(item)" class="quantity-btn">➕</button>
+          </div>
+        </div>
+        
+        
+      </div>
+      <button mat-raised-button color="warn" (click)="removeFromCart(item)">Remove</button>
+    </div>
+    
+
+    <button mat-stroked-button color="accent" class="mt-8" (click)="clearCart()">Clear Cart</button>
+    <button mat-raised-button color="primary" class="mt-4" (click)="passerCommande()">Passer la commande</button>
+
+  </div>
+
+  <ng-template #emptyCart>
+    <p class="text-xl">Your cart is empty!</p>
+  </ng-template>
+</div>

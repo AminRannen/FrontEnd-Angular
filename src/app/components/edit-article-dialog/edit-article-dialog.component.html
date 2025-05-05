@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>Edit Product</h2>
+<mat-dialog-content [formGroup]="form">
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Designation</mat-label>
+    <input matInput formControlName="designation" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Marque</mat-label>
+    <input matInput formControlName="marque" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Reference</mat-label>
+    <input matInput formControlName="reference" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Quantité en stock</mat-label>
+    <input matInput type="number" formControlName="qtestock" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Prix</mat-label>
+    <input matInput type="number" formControlName="prix" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Image URL</mat-label>
+    <input matInput formControlName="imageart" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>ID de sous-catégorie</mat-label>
+    <input matInput formControlName="scategorieID" />
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Annuler</button>
+  <button mat-button color="primary" (click)="onSave()">Enregistrer</button>
+</mat-dialog-actions>

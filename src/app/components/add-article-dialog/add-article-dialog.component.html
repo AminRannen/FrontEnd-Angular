@@ -1,0 +1,68 @@
+<h2 mat-dialog-title>Add Product</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="productForm">
+
+    <!-- Designation -->
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Designation</mat-label>
+      <input matInput formControlName="designation" />
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Référence</mat-label>
+        <input matInput formControlName="reference" required>
+      </mat-form-field>
+    <!-- Marque -->
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Brand</mat-label>
+      <input matInput formControlName="marque" />
+    </mat-form-field>
+
+    <!-- Prix -->
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Price</mat-label>
+      <input matInput type="number" formControlName="prix" />
+    </mat-form-field>
+
+    <!-- Quantité stock -->
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Stock Quantity</mat-label>
+      <input matInput type="number" formControlName="qtestock" />
+    </mat-form-field>
+
+    <!-- Image -->
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Image URL</mat-label>
+      <input matInput formControlName="imageart" />
+    </mat-form-field>
+
+    <!-- Catégorie -->
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="categorieID" (selectionChange)="onCategoryChange($event.value)">
+        <mat-option *ngFor="let cat of categories" [value]="cat.id">
+          {{ cat.nomcategorie }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Sous-catégorie -->
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Subcategory</mat-label>
+      <mat-select formControlName="scategorieID" [disabled]="filteredSubcategories.length === 0">
+        <mat-option *ngFor="let sub of filteredSubcategories" [value]="sub.id">
+          {{ sub.nomscategorie }}
+        </mat-option>
+        <mat-option *ngIf="filteredSubcategories.length === 0" disabled>
+          Please select a category first
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="submit()" [disabled]="!productForm.valid">Add</button>
+</mat-dialog-actions>

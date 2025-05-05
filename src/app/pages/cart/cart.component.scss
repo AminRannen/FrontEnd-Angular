@@ -1,0 +1,28 @@
+.quantity-btn {
+  background: #007BFF;
+  color: white;
+  border: none;
+  padding: 12px 18px; /* Bigger buttons */
+  margin: 0 10px;
+  font-size: 20px; /* Increased font size */
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.quantity-btn:hover {
+  background: #0056b3;
+}
+
+.quantity-btn.big {
+  padding: 16px 24px; /* Extra-large size */
+  font-size: 24px;
+}
+
+.quantity-display {
+  font-size: 22px;
+  font-weight: bold;
+  min-width: 50px;
+  display: inline-block;
+  text-align: center;
+}
