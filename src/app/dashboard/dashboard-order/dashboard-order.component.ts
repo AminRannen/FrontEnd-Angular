@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommandeService } from 'src/services/commande.service';
 import { AuthService } from 'src/services/auth.service';
-import { ChartConfiguration } from 'chart.js';
+import { OrderEditModalComponent } from 'src/app/components/order-edit-modal/order-edit-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-dashboard-order',
@@ -21,11 +22,28 @@ export class DashboardOrderComponent implements OnInit {
 
   constructor(
     private commandeService: CommandeService,
-    private authService: AuthService
+    private authService: AuthService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     this.loadCommandes();
+  }
+
+  openOrderEditModal(order: any): void {
+    const dialogRef = this.dialog.open(OrderEditModalComponent, {
+      width: '600px',
+      data: { ...order } // Pass a copy of the order
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.commandeService.updateCommande(order.id, result).subscribe({
+          next: () => this.loadCommandes(), // Refresh the list after update
+          error: err => console.error('Error updating order:', err)
+        });
+      }
+    });
   }
 
   loadCommandes(): void {
@@ -41,9 +59,7 @@ export class DashboardOrderComponent implements OnInit {
             date: new Date(order.date_commande),
             productSummary: this.getProductSummary(order.ligne_commandes),
             status: order.status.toLowerCase(),
-            originalStatus: order.status.toLowerCase(),
             clientName: user?.name || 'Unknown',
-            isEditingStatus: false,
             statusColor: this.getStatusColor(order.status.toLowerCase())
           });
         }
@@ -61,40 +77,6 @@ export class DashboardOrderComponent implements OnInit {
     return foundStatus ? foundStatus.color : 'bg-gray-100 text-gray-800';
   }
 
-  toggleEditStatus(order: any): void {
-    order.isEditingStatus = !order.isEditingStatus;
-    if (!order.isEditingStatus) {
-      order.status = order.originalStatus;
-    }
-  }
-
-  updateOrderStatus(order: any): void {
-    if (order.status === order.originalStatus) {
-      order.isEditingStatus = false;
-      return;
-    }
-
-    const updatedData = {
-      user_id: order.user_id,
-      date_commande: order.date.toISOString().split('T')[0],
-      total: order.total,
-      status: order.status
-    };
-
-    this.commandeService.updateCommande(order.id, updatedData).subscribe({
-      next: () => {
-        order.originalStatus = order.status;
-        order.statusColor = this.getStatusColor(order.status);
-        order.isEditingStatus = false;
-      },
-      error: (err) => {
-        console.error('Error updating full order:', err);
-        order.status = order.originalStatus;
-        order.isEditingStatus = false;
-      }
-    });
-  }
-
   private getProductSummary(lignes: any[]): string {
     if (!lignes || lignes.length === 0) return 'No items';
     return lignes.length === 1 ? '1 item' : `${lignes.length} items`;
@@ -102,11 +84,10 @@ export class DashboardOrderComponent implements OnInit {
 
   cancelOrder(orderId: number): void {
     if (confirm('Are you sure you want to cancel this order?')) {
-      const order = this.orders.find(o => o.id === orderId);
-      if (order) {
-        order.status = 'cancelled';
-        this.updateOrderStatus(order);
-      }
+      this.commandeService.updateOrderStatus(orderId, 'cancelled').subscribe({
+        next: () => this.loadCommandes(),
+        error: err => console.error('Error cancelling order:', err)
+      });
     }
   }
 

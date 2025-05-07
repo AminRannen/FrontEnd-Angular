@@ -1,0 +1,15 @@
+<h2 class="text-lg font-semibold mb-4">Edit Category</h2>
+<div class="space-y-4">
+  <label class="block">
+    <span class="text-gray-700">Name</span>
+    <input [(ngModel)]="data.nomcategorie" class="w-full border rounded p-2 mt-1" />
+  </label>
+  <label class="block">
+    <span class="text-gray-700">Image Filename</span>
+    <input [(ngModel)]="data.imagecategorie" class="w-full border rounded p-2 mt-1" />
+  </label>
+</div>
+<div class="mt-6 text-right">
+  <button class="mr-3 text-gray-500" (click)="close()">Cancel</button>
+  <button class="bg-blue-600 text-white px-4 py-2 rounded" (click)="save()">Save</button>
+</div>

@@ -19,8 +19,11 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { AddArticleDialogComponent } from 'src/app/components/add-article-dialog/add-article-dialog.component';
 import { NgChartsModule } from 'ng2-charts';
+import { OrderEditModalComponent } from './components/order-edit-modal/order-edit-modal.component';
+import { EditCategoryModalComponent } from './components/edit-category-modal/edit-category-modal.component';
+import { EditScategoryModalComponent } from './components/edit-scategory-modal/edit-scategory-modal.component';
 @NgModule({
-  declarations: [AppComponent, CartComponent, EditArticleDialogComponent,AddArticleDialogComponent],
+  declarations: [AppComponent, CartComponent, EditArticleDialogComponent,AddArticleDialogComponent, OrderEditModalComponent, EditCategoryModalComponent, EditScategoryModalComponent],
   imports: [BrowserModule, 
     AppRoutingModule, 
     

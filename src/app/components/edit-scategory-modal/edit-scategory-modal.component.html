@@ -1,0 +1,40 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Add' }} Subcategory</h2>
+
+<form [formGroup]="scategoryForm" (ngSubmit)="onSubmit()">
+  <div mat-dialog-content>
+    <div class="mb-4">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Subcategory Name</mat-label>
+        <input matInput formControlName="nomscategorie" placeholder="Enter subcategory name">
+        <mat-error *ngIf="scategoryForm.get('nomscategorie')?.invalid">Name is required</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="mb-4">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Parent Category</mat-label>
+        <mat-select formControlName="categorieID">
+          <mat-option *ngFor="let category of categories" [value]="category.id">
+            {{ category.nomcategorie }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="scategoryForm.get('categorieID')?.invalid">Parent category is required</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="mb-4">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Image</mat-label>
+        <input matInput formControlName="imagescategorie" placeholder="Image filename">
+        <mat-hint>Default image will be used if left empty</mat-hint>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="scategoryForm.invalid">
+      {{ isEditMode ? 'Update' : 'Create' }}
+    </button>
+  </div>
+</form>

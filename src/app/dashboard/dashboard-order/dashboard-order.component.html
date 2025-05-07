@@ -36,29 +36,10 @@
               <span class="font-semibold">{{order.total}} €</span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div *ngIf="!order.isEditingStatus"
-                   [class]="order.statusColor"
-                   class="text-xs rounded-full px-3 py-1 font-medium cursor-pointer inline-block"
-                   (click)="toggleEditStatus(order)">
+              <span [class]="order.statusColor"
+                   class="text-xs rounded-full px-3 py-1 font-medium inline-block">
                 {{ order.status | titlecase }}
-              </div>
-
-              <div *ngIf="order.isEditingStatus" class="flex items-center space-x-2">
-                <select [(ngModel)]="order.status"
-                        class="text-xs rounded border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                  <option *ngFor="let status of statusOptions" [value]="status.value">
-                    {{ status.display }}
-                  </option>
-                </select>
-                <button (click)="updateOrderStatus(order)"
-                        class="text-xs bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded transition">
-                  Save
-                </button>
-                <button (click)="toggleEditStatus(order)"
-                        class="text-xs bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded transition">
-                  Cancel
-                </button>
-              </div>
+              </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right">
               <button class="text-gray-400 hover:text-gray-600"
@@ -67,10 +48,7 @@
                 <mat-icon>more_vert</mat-icon>
               </button>
               <mat-menu #menu="matMenu" xPosition="before">
-                <button mat-menu-item [routerLink]="['/dashboard/orders', order.id]">
-                  <mat-icon class="text-gray-600">visibility</mat-icon>
-                  <span>View Details</span>
-                </button>
+             
                 <button mat-menu-item (click)="cancelOrder(order.id)" *ngIf="order.status === 'pending'">
                   <mat-icon class="text-red-600">cancel</mat-icon>
                   <span>Cancel</span>
@@ -79,6 +57,10 @@
                   <mat-icon class="text-red-600">delete</mat-icon>
                   <span>Delete</span>
                 </button>
+                <button mat-menu-item (click)="openOrderEditModal(order)">
+                  <mat-icon class="text-blue-600">edit</mat-icon>
+                  <span>Edit Order Status</span>
+                </button>
               </mat-menu>
             </td>
           </tr>
@@ -86,5 +68,4 @@
       </table>
     </div>
   </div>
-  
 </div>

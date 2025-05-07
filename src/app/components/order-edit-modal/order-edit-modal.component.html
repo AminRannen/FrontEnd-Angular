@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>Edit Status #{{ order.id }}</h2>
+<mat-dialog-content>
+  <mat-form-field class="w-full">
+    <mat-label>Status</mat-label>
+    <mat-select [(ngModel)]="order.status">
+      <mat-option value="pending">Pending</mat-option>
+      <mat-option value="processing">Processing</mat-option>
+      <mat-option value="completed">Completed</mat-option>
+      <mat-option value="cancelled">Cancelled</mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" [disabled]="isLoading">Cancel</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="isLoading">
+    <span *ngIf="!isLoading">Save</span>
+    <span *ngIf="isLoading">Saving...</span>
+  </button>
+</mat-dialog-actions>

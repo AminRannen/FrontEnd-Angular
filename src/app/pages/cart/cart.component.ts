@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Article } from 'src/app/models/article.model';
 import { CartService } from 'src/services/cart.service';
 import { CommandeService } from 'src/services/commande.service';
+import { ArticleService } from 'src/services/article.service';
 
 @Component({
   selector: 'app-cart',
@@ -15,6 +16,7 @@ export class CartComponent implements OnInit {
   constructor(
     private cartService: CartService,
     private commandeService: CommandeService,
+    private articleService: ArticleService,
     private router: Router
   ) {}
 
@@ -28,9 +30,49 @@ export class CartComponent implements OnInit {
       this.router.navigate(['/dashboard/orders']);
       return;
     }
-  
+
+    const userId = parseInt(sessionStorage.getItem('userId') || '0', 10);
+    if (!userId) {
+      alert('Utilisateur non connecté.');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    let validationErrors: string[] = [];
+    let itemsChecked = 0;
+
+    // Stock verification before placing the order
+    this.cartItems.forEach((item) => {
+      this.articleService.getArticleById(item.id).subscribe({
+        next: (article) => {
+          if (item.quantity > article.qtestock) {
+            validationErrors.push(
+              `Stock insuffisant pour ${article.designation}. Disponible: ${article.qtestock}, demandé: ${item.quantity}`
+            );
+          }
+          itemsChecked++;
+
+          if (itemsChecked === this.cartItems.length) {
+            if (validationErrors.length > 0) {
+              alert(validationErrors.join('\n'));
+              return;
+            }
+            this.placeOrder(userId);
+          }
+        },
+        error: (err) => {
+          console.error('Error checking stock:', err);
+          itemsChecked++;
+          if (itemsChecked === this.cartItems.length && validationErrors.length === 0) {
+            this.placeOrder(userId);
+          }
+        }
+      });
+    });
+  }
+
+  placeOrder(userId: number): void {
     const totalCommande = this.getTotal();
-    const userId = 1; // Remplacer par l’ID utilisateur connecté
     const today = new Date();
     const dateFormatted = today.toISOString().split('T')[0];
   
@@ -42,47 +84,14 @@ export class CartComponent implements OnInit {
     };
   
     this.commandeService.createCommande(commandeData).subscribe({
-      next: (createdCommande) => {
-        let processedItems = 0;
-        const totalItems = this.cartItems.length;
-  
-        this.cartItems.forEach((item) => {
-          const ligneCommande = {
-            commande_id: createdCommande.id,
-            article_id: item.id,
-            quantity: item.quantity || 1, // Send correct quantity
-            price: parseFloat(item.prix.toString()),
-          };
-          
-  
-          this.commandeService.createLigneCommande(ligneCommande).subscribe({
-            complete: () => {
-              processedItems++;
-              if (processedItems === totalItems) {
-                // ✅ Afficher l'alerte dans tous les cas à la fin
-                alert('Commande passée avec succès ✅');
-                this.cartService.clearCart();
-                this.cartItems = [];
-                this.router.navigate(['/dashboard/orders']);
-              }
-            },
-            error: () => {
-              processedItems++;
-              if (processedItems === totalItems) {
-                // ✅ Même si erreurs, afficher succès et rediriger
-                alert('Commande passée avec succès ✅');
-                this.cartService.clearCart();
-                this.cartItems = [];
-                this.router.navigate(['/dashboard/orders']);
-              }
-            }
-          });
-        });
-      },
-      error: () => {
-        // ✅ Même si la commande principale échoue
+      next: () => {
         alert('Commande passée avec succès ✅');
-        this.router.navigate(['/dashboard/orders']);
+        this.cartService.clearCart();
+        this.cartItems = [];
+      },
+      error: (err) => {
+        console.error('Error creating order:', err);
+        alert('Erreur lors du passage de la commande');
       }
     });
   }
@@ -98,11 +107,11 @@ export class CartComponent implements OnInit {
   getTotal(): number {
     return this.cartItems.reduce((acc, item) => acc + (parseFloat(item.prix.toString()) * (item.quantity || 1)), 0);
   }
-  
+
   increaseQuantity(item: Article): void {
     item.quantity = (item.quantity || 1) + 1;
   }
-  
+
   decreaseQuantity(item: Article): void {
     if (item.quantity && item.quantity > 1) {
       item.quantity--;
@@ -110,5 +119,4 @@ export class CartComponent implements OnInit {
       this.removeFromCart(item);
     }
   }
-  
 }

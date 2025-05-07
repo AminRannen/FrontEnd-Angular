@@ -24,18 +24,26 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.menuList = staticMenuList;
-    this.checkAuthState(); // Check auth state on init
-
+    this.handleUserRole(); // validate and assign role
+    this.checkAuthState(); // set isLoggedIn
+  
     this.breakpointObserver.observe(['(max-width: 1199px)']).subscribe(({ matches }) => {
       this.isLessThenLargeDevice = matches;
     });
-
-    // Subscribe to cart changes
+  
     this.cartService.cartCount$.subscribe(count => {
       this.cartCount = count;
     });
+  
+    // Filter menu based on role
+    this.menuList = staticMenuList.filter(menu => {
+      if (menu.name === 'Dashboard') {
+        return this.userRole === '0'; // show only for admin
+      }
+      return true;
+    });
   }
+  
 
   checkAuthState(): void {
     // Check if token exists in sessionStorage
@@ -43,13 +51,31 @@ export class HeaderComponent implements OnInit {
   }
 
   logout(): void {
-    // Remove token from sessionStorage
-    sessionStorage.removeItem('token'); // or your actual token key
+    // Clear all session storage
+    sessionStorage.clear();
+  
+    // Clear all local storage
+    localStorage.clear();
+  
+    // Reset login state
     this.isLoggedIn = false;
-    // Optional: You might want to navigate to login page after logout
-    // window.location.reload(); // Uncomment if you want to refresh the page
+  
+    // Optional: Refresh page to ensure full logout effect
+    // window.location.reload();
   }
+  
+  userRole: string = 'guest'; // fallback default
 
+  handleUserRole(): void {
+    const role = sessionStorage.getItem('userRole');
+    if (role !== '0' && role !== '1') {
+      sessionStorage.removeItem('userRole');
+      this.userRole = 'guest';
+    } else {
+      this.userRole = role;
+    }
+  }
+  
   @HostListener('window:scroll', ['$event'])
   checkScroll() {
     this.isScrolled = window.pageYOffset > 15;

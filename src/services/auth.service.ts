@@ -29,5 +29,8 @@ export class AuthService {
   getUserById(id: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/users/${id}`);
   }
-  
+updateUser(id: number, data: any) {
+  return this.http.patch<any>(`${this.apiUrl}/users/${id}`, data); 
+}
+
 }

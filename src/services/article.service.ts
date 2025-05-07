@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Article } from 'src/app/models/article.model';
+
 // Optionnel : tu peux créer une interface pour Article
 
 
@@ -55,4 +56,8 @@ export class ArticleService {
       `${this.baseUrl}/article-counts-by-category`
     );
   }
+  updateArticleStock(id: number, quantity: number): Observable<any> {
+    return this.http.put(`http://localhost:8000/api/articles/${id}/update-stock`, { quantity });
+  }
+  
 }

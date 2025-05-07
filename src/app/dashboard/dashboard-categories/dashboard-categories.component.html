@@ -1,0 +1,90 @@
+<div class="p-6">
+  <!-- Categories Management -->
+  <h2 class="text-xl font-semibold mb-4">Categories Management</h2>
+  <div class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="p-4 flex justify-end">
+      <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center gap-1">
+        <mat-icon>add</mat-icon> Add Category
+      </button>
+    </div>
+    <table class="min-w-full divide-y divide-gray-200 text-sm">
+      <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+        <tr>
+          <th class="px-6 py-3 text-left">ID</th>
+          <th class="px-6 py-3 text-left">Image</th>
+          <th class="px-6 py-3 text-left">Name</th>
+          <th class="px-6 py-3 text-center">Subcategories</th>
+          <th class="px-6 py-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 bg-white">
+        <tr *ngFor="let cat of categories" class="hover:bg-gray-50" [class.bg-blue-50]="selectedCategoryId === cat.id">
+          <td class="px-6 py-4 text-gray-700">{{ cat.id }}</td>
+          <td class="px-6 py-4">
+            <img [src]="cat.imagecategorie" class="w-10 h-10 rounded-full object-cover" alt="{{ cat.nomcategorie }}" />
+          </td>
+          <td class="px-6 py-4 font-medium text-gray-900">{{ cat.nomcategorie }}</td>
+          <td class="px-6 py-4 text-center">
+            <button class="bg-green-100 hover:bg-green-200 text-green-800 px-3 py-1 rounded text-xs"
+                    (click)="selectCategory(cat.id)">
+              View Subcategories
+            </button>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <button class="text-blue-600 hover:underline text-sm">Edit</button>
+            <button class="text-red-600 hover:underline text-sm ml-3" (click)="deleteCategory(cat.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Subcategories Management -->
+  <h2 class="text-xl font-semibold mt-10 mb-4">Subcategories Management</h2>
+  <div class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="p-4 flex justify-between items-center">
+      <div *ngIf="selectedCategoryId" class="text-sm text-gray-600">
+        Showing subcategories for: <span class="font-medium">{{ getCategoryName(selectedCategoryId) }}</span>
+      </div>
+      <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center gap-1"
+              (click)="openAddSubcategoryModal()"
+              [disabled]="!selectedCategoryId"
+              [class.opacity-50]="!selectedCategoryId"
+              [class.cursor-not-allowed]="!selectedCategoryId">
+        <mat-icon>add</mat-icon> Add Subcategory
+      </button>
+    </div>
+    <table class="min-w-full divide-y divide-gray-200 text-sm">
+      <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+        <tr>
+          <th class="px-6 py-3 text-left">ID</th>
+          <th class="px-6 py-3 text-left">Image</th>
+          <th class="px-6 py-3 text-left">Name</th>
+          <th class="px-6 py-3 text-left">Parent Category</th>
+          <th class="px-6 py-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 bg-white">
+        <tr *ngFor="let scat of getFilteredScategories()" class="hover:bg-gray-50">
+          <td class="px-6 py-4 text-gray-700">{{ scat.id }}</td>
+          <td class="px-6 py-4">
+            <img [src]="scat.imagescategorie" class="w-10 h-10 rounded-full object-cover" alt="{{ scat.nomscategorie }}" />
+          </td>
+          <td class="px-6 py-4 font-medium text-gray-900">{{ scat.nomscategorie }}</td>
+          <td class="px-6 py-4 text-gray-700">{{ getCategoryName(scat.categorieID) }}</td>
+          <td class="px-6 py-4 text-right">
+            <button class="text-blue-600 hover:underline text-sm" 
+                    (click)="openEditSubcategoryModal(scat)">Edit</button>
+            <button class="text-red-600 hover:underline text-sm ml-3" 
+                    (click)="deleteSubcategory(scat.id)">Delete</button>
+          </td>
+        </tr>
+        <tr *ngIf="!getFilteredScategories().length">
+          <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+            {{ selectedCategoryId ? 'No subcategories found' : 'Select a category to view subcategories' }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
